@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <link rel="stylesheet" href="calc.css">
+</head>
+
+<body>
+  <div class="calculator">
+    <input type="text" id="display" class="display" disabled>
+    <div class="buttons">
+      <button onclick="joinValues('7')">7</button>
+      <button onclick="joinValues('8')">8</button>
+      <button onclick="joinValues('9')">9</button>
+      <button onclick="joinOperator('/')">/</button>
+      <button onclick="joinValues('4')">4</button>
+      <button onclick="joinValues('5')">5</button>
+      <button onclick="joinValues('6')">6</button>
+      <button onclick="joinOperator('*')">*</button>
+      <button onclick="joinValues('1')">1</button>
+      <button onclick="joinValues('2')">2</button>
+      <button onclick="joinValues('3')">3</button>
+      <button onclick="joinOperator('-')">-</button>
+      <button onclick="joinValues('0')">0</button>
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="joinOperator('+')">+</button>
+      <button class="equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+    let currentValue = '';
+    let operator = '';
+    let firstOperand = '';
+    let checkLastOperator = '';
+
+    function joinValues(value) {
+      if (checkLastOperator === 'operator' || checkLastOperator === '' || checkLastOperator === 'number') {
+        currentValue = currentValue+ value;
+        display.value = firstOperand + ' ' + operator + ' ' + currentValue;
+        checkLastOperator = 'number';
+      }
+    }
+
+    function joinOperator(op) {
+      if (checkLastOperator === 'number') {
+        if (firstOperand === '') {
+          firstOperand = parseFloat(currentValue);
+        } else if (currentValue !== '') {
+          firstOperand = calculateResult(firstOperand, operator, parseFloat(currentValue));
+        }
+        operator = op;
+        currentValue = '';
+        display.value = firstOperand + ' ' + operator ;
+        checkLastOperator = 'operator';
+      }
+    }
+
+    function calculate() {
+      if (checkLastOperator === 'number') {
+        const result = calculateResult(firstOperand, operator, parseFloat(currentValue));
+        display.value = result;
+        currentValue = '';
+        operator = '';
+        firstOperand = '';
+        checkLastOperator = '';
+      }
+    }
+
+    function calculateResult(a, op, b) {
+      switch (op) {
+        case '+':
+          return a + b;
+        case '-':
+          return a - b;
+        case '*':
+          return a * b;
+        case '/':
+          if (b === 0) {
+            alert('Division by zero is not allowed');
+            return 0;
+          }
+          return a / b;
+        default:
+          return 0;
+      }
+    }
+
+    function clearDisplay() {
+      currentValue = '';
+      operator = '';
+      firstOperand = '';
+      display.value = '';
+      checkLastOperator = '';
+    }
+
+  </script>
+</body>
+
+</html>
