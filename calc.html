@@ -37,10 +37,11 @@
     let operator = '';
     let firstOperand = '';
     let checkLastOperator = '';
+    let fullstring = '';
 
     function joinValues(value) {
       if (checkLastOperator === 'operator' || checkLastOperator === '' || checkLastOperator === 'number') {
-        currentValue = currentValue+ value;
+        currentValue = currentValue + value;
         display.value = firstOperand + ' ' + operator + ' ' + currentValue;
         checkLastOperator = 'number';
       }
@@ -55,8 +56,12 @@
         }
         operator = op;
         currentValue = '';
-        display.value = firstOperand + ' ' + operator ;
+        display.value = firstOperand + ' ' + operator;
         checkLastOperator = 'operator';
+      }
+      else if (checkLastOperator === 'operator') {
+        operator = op;
+        display.value = firstOperand + ' ' + operator;
       }
     }
 
@@ -64,11 +69,14 @@
       if (checkLastOperator === 'number') {
         const result = calculateResult(firstOperand, operator, parseFloat(currentValue));
         display.value = result;
+        joinOperator(op);
+        joinValues(value)
         currentValue = '';
         operator = '';
         firstOperand = '';
         checkLastOperator = '';
       }
+      display.value = result
     }
 
     function calculateResult(a, op, b) {
@@ -86,7 +94,7 @@
           }
           return a / b;
         default:
-          return 0;
+          return currentValue;
       }
     }
 
@@ -96,7 +104,30 @@
       firstOperand = '';
       display.value = '';
       checkLastOperator = '';
+      fullstring = ''
     }
+
+    let keyboardOperator = '';
+
+    window.addEventListener('keydown', function (event) {
+      if (event.key >= '0' && event.key <= '9') {
+        joinValues(event.key);
+        keyboardOperator = 'number'
+      } else if (event.key === '+' || event.key === '-' || event.key === '*' || event.key === '/') {
+        joinOperator(event.key);
+        if (keyboardOperator === 'operator') {
+          joinOperator(event.key)
+        }
+      } else if (event.key === 'Enter') {
+        if (keyboardOperator === 'number') {
+          calculate();
+          joinOperator(event.key);
+          joinValues(event.key);
+        }
+      } else if (event.key === 'Backspace') {
+        clearDisplay();
+      }
+    });
 
   </script>
 </body>
